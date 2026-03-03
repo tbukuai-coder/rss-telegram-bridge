@@ -1,0 +1,26 @@
+# RSS Feeds to monitor
+# Add your feeds here
+
+feeds:
+  - name: "Hacker News"
+    url: "https://hnrss.org/frontpage"
+    enabled: true
+  
+  - name: "TechCrunch"
+    url: "https://techcrunch.com/feed/"
+    enabled: true
+  
+  - name: "The Verge"
+    url: "https://www.theverge.com/rss/index.xml"
+    enabled: false  # Set to true to enable
+
+# Settings
+settings:
+  # Maximum articles to post per feed per run (prevents spam on first run)
+  max_articles_per_run: 5
+  
+  # Include summary in message (true/false)
+  include_summary: true
+  
+  # Summary max length (characters)
+  summary_max_length: 280

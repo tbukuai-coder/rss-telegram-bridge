@@ -1,0 +1,56 @@
+name: RSS to Telegram Bridge
+
+on:
+  # Run every 30 minutes
+  schedule:
+    - cron: '*/30 * * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+  # Run on push to main (for testing)
+  push:
+    branches: [main]
+    paths:
+      - 'main.py'
+      - 'config.yaml'
+      - 'requirements.txt'
+      - '.github/workflows/rss-bridge.yml'
+
+jobs:
+  fetch-and-post:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Restore posted state
+        uses: actions/cache@v4
+        with:
+          path: posted.json
+          key: posted-state-${{ github.run_id }}
+          restore-keys: |
+            posted-state-
+      
+      - name: Run RSS bridge
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+      
+      - name: Save posted state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: posted.json
+          key: posted-state-${{ github.run_id }}
