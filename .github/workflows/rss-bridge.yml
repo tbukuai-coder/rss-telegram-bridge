@@ -1,9 +1,11 @@
 name: RSS to Telegram Bridge
 
 on:
-  # Run every 30 minutes
+  # Run at 8am and 5pm MYT (UTC+8)
+  # 8am MYT = 0:00 UTC, 5pm MYT = 9:00 UTC
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 0 * * *'   # 8am MYT
+    - cron: '0 9 * * *'   # 5pm MYT
   
   # Allow manual trigger
   workflow_dispatch:
