@@ -24,8 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: Checkout main (code)
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0  # Fetch all branches
+      
+      - name: Fetch posted state from data branch
+        run: |
+          git fetch origin data:data 2>/dev/null || true
+          git show data:posted.json > posted.json 2>/dev/null || echo '{"posted": [], "updated": null}' > posted.json
+          cat posted.json
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -36,23 +45,34 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       
-      - name: Restore posted state
-        uses: actions/cache@v4
-        with:
-          path: posted.json
-          key: posted-state-${{ github.run_id }}
-          restore-keys: |
-            posted-state-
-      
       - name: Run RSS bridge
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
       
-      - name: Save posted state
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: posted.json
-          key: posted-state-${{ github.run_id }}
+      - name: Save posted state to data branch
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Save current posted.json
+          cp posted.json /tmp/posted.json
+          
+          # Switch to data branch
+          git checkout data
+          
+          # Copy updated file
+          cp /tmp/posted.json posted.json
+          
+          # Commit and push if changed
+          git add posted.json
+          if git diff --cached --quiet; then
+            echo "No changes to posted.json"
+          else
+            git commit -m "Update posted state [skip ci]"
+            git push origin data
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
