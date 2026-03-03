@@ -2,17 +2,35 @@
 # Add your feeds here
 
 feeds:
+  # Bloomberg feeds
+  - name: "Bloomberg Markets"
+    url: "https://feeds.bloomberg.com/markets/news.rss"
+    enabled: true
+  
+  - name: "Bloomberg Politics"
+    url: "https://feeds.bloomberg.com/politics/news.rss"
+    enabled: true
+  
+  - name: "Bloomberg Technology"
+    url: "https://feeds.bloomberg.com/technology/news.rss"
+    enabled: true
+  
+  - name: "Bloomberg Wealth"
+    url: "https://feeds.bloomberg.com/wealth/news.rss"
+    enabled: false
+  
+  - name: "Bloomberg Economics"
+    url: "https://feeds.bloomberg.com/economics/news.rss"
+    enabled: false
+  
+  # Other feeds (disabled by default)
   - name: "Hacker News"
     url: "https://hnrss.org/frontpage"
-    enabled: true
+    enabled: false
   
   - name: "TechCrunch"
     url: "https://techcrunch.com/feed/"
-    enabled: true
-  
-  - name: "The Verge"
-    url: "https://www.theverge.com/rss/index.xml"
-    enabled: false  # Set to true to enable
+    enabled: false
 
 # Settings
 settings:
