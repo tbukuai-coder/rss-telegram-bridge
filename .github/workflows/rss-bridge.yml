@@ -19,6 +19,9 @@ on:
       - 'requirements.txt'
       - '.github/workflows/rss-bridge.yml'
 
+permissions:
+  contents: write
+
 jobs:
   fetch-and-post:
     runs-on: ubuntu-latest
